@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+/* 디자인 토큰 시스템 - Design_Guide.md 섹션 2.5 참조 */
+
+:root {
+  /* 메인 컬러 - 버건디 */
+  --color-primary: #800020;
+  --color-primary-hover: #990025;
+  --color-primary-active: #660019;
+  --color-primary-disabled: #CCCCCC;
+  
+  /* 배경 컬러 */
+  --color-background: #FFFFFF;
+  --color-background-secondary: #FAFAFA;
+  --color-background-tertiary: #F5F5F5;
+  
+  /* 텍스트 컬러 */
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+  --color-text-placeholder: #CCCCCC;
+  --color-text-on-primary: #FFFFFF;
+  
+  /* 구분선 컬러 */
+  --color-border-primary: #E5E5E5;
+  --color-border-secondary: #F0F0F0;
+  
+  /* 상태 컬러 */
+  --color-success: #10B981;
+  --color-success-bg: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-bg: #FEE2E2;
+  --color-info: #3B82F6;
+  --color-info-bg: #DBEAFE;
+  
+  /* 간격 시스템 - 8포인트 그리드 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  
+  /* 타이포그래피 */
+  --font-family-sans: var(--font-noto-sans-kr), 'Malgun Gothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  
+  /* 그림자 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.15);
+  
+  /* 트랜지션 */
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-slow: 400ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* 다크 모드 지원 (향후 확장) */
+  :root {
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 모션 감소 옵션 지원 */
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 접근성 향상 - 텍스트 간격 조정 지원 */
+.text-content {
+  line-height: clamp(1.5, var(--user-line-height, 1.6), 2.5);
+  letter-spacing: clamp(0, var(--user-letter-spacing, 0), 0.12em);
+  word-spacing: clamp(0, var(--user-word-spacing, 0), 0.16em);
+}
+
+/* 애니메이션 */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소개 - AI 신입생 도우미</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans KR', -apple-system, sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* 네비게이션 바 */
+        .navbar {
+            background: linear-gradient(135deg, #800020 0%, #a00030 100%);
+            color: white;
+            padding: 16px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .navbar .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* 컨텐츠 */
+        .content {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 24px;
+        }
+
+        .content h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .content h2 {
+            font-size: 28px;
+            color: #800020;
+            margin-top: 40px;
+            margin-bottom: 16px;
+        }
+
+        .content p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin: 20px 0;
+            padding-left: 24px;
+        }
+
+        .content li {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #800020;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .tech-stack {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-stack h3 {
+            color: #800020;
+            margin-bottom: 16px;
+        }
+
+        .tech-stack ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-stack li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .tech-stack li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">🎓 AI 신입생 도우미</div>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="chat.html">챗봇</a></li>
+                <li><a href="about.html">소개</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 컨텐츠 -->
+    <div class="content">
+        <h1>프로젝트 소개</h1>
+        <p>
+            AI 신입생 도우미는 서울여자대학교 신입생들이 학교 생활에 빠르게 적응할 수 있도록 
+            도와주는 인공지능 기반 챗봇 서비스입니다.
+        </p>
+
+        <h2>✨ 주요 기능</h2>
+        <ul>
+            <li><strong>학사 일정 안내</strong>: 수강신청, 시험, 등록금 납부 등 중요한 일정 정보</li>
+            <li><strong>장학금 정보</strong>: 다양한 장학금 신청 방법과 자격 요건</li>
+            <li><strong>학사 용어 설명</strong>: 복수전공, 학점제 등 어려운 용어를 쉽게 설명</li>
+            <li><strong>지원 프로그램</strong>: 비교과 프로그램, 취업 지원, 멘토링 정보</li>
+            <li><strong>자연어 대화</strong>: AI가 자연스러운 대화로 답변 제공</li>
+        </ul>
+
+        <h2>📊 개발 현황</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">90%</div>
+                <div class="label">전체 진행률</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">52</div>
+                <div class="label">초기 데이터</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">7</div>
+                <div class="label">AI 서비스</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">4</div>
+                <div class="label">API 엔드포인트</div>
+            </div>
+        </div>
+
+        <h2>🏗️ 기술 스택</h2>
+        <div class="tech-stack">
+            <h3>백엔드</h3>
+            <ul>
+                <li>FastAPI - 웹 프레임워크</li>
+                <li>PostgreSQL + pgvector - 데이터베이스 및 벡터 검색</li>
+                <li>Claude AI - 자연어 처리</li>
+                <li>sentence-transformers - 텍스트 임베딩</li>
+                <li>Redis - 캐싱 시스템</li>
+            </ul>
+        </div>
+
+        <div class="tech-stack">
+            <h3>프론트엔드</h3>
+            <ul>
+                <li>HTML5, CSS3, JavaScript</li>
+                <li>반응형 디자인</li>
+                <li>모던 UI/UX</li>
+            </ul>
+        </div>
+
+        <div class="tech-stack">
+            <h3>AI 기능</h3>
+            <ul>
+                <li>RAG (검색 증강 생성) 파이프라인</li>
+                <li>벡터 임베딩 및 유사도 검색</li>
+                <li>하이브리드 검색 (키워드 + 벡터)</li>
+                <li>질문 분류 및 의도 파악</li>
+                <li>답변 검증 및 품질 관리</li>
+            </ul>
+        </div>
+
+        <h2>🎯 개발 목표</h2>
+        <p>
+            본 프로젝트는 신입생들이 학교 생활을 시작하면서 겪는 어려움을 해소하고,
+            필요한 정보를 빠르고 정확하게 제공하여 대학 생활에 대한 만족도를 높이는 것을 목표로 합니다.
+        </p>
+
+        <h2>📅 개발 기간</h2>
+        <p>2026년 1월 (1일 집중 개발)</p>
+
+        <h2>👥 개발팀</h2>
+        <p>AI Development Assistant with Cursor</p>
+
+        <h2>📞 문의</h2>
+        <p>프로젝트 관련 문의사항은 GitHub Issues를 통해 제출해주세요.</p>
+    </div>
+</body>
+</html>

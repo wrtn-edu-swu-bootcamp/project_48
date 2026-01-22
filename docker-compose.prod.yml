@@ -1,0 +1,224 @@
+# Docker Compose 프로덕션 환경 설정
+version: '3.8'
+
+services:
+  # PostgreSQL 데이터베이스
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: swu-postgres-prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=ko_KR.UTF-8"
+    ports:
+      - "127.0.0.1:5432:5432"  # 외부 접근 차단
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./backups:/backups  # 백업 디렉토리
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: swu-redis-prod
+    ports:
+      - "127.0.0.1:6379:6379"  # 외부 접근 차단
+    command: >
+      redis-server
+      --maxmemory 1gb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # 백엔드 API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swu-backend-prod
+    environment:
+      # 데이터베이스
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      
+      # Redis
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      
+      # API Keys
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      
+      # 환경 설정
+      ENVIRONMENT: production
+      LOG_LEVEL: INFO
+      
+      # CORS
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      
+      # 레이트 리미팅
+      RATE_LIMIT_ENABLED: true
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-100}
+      
+      # 캐시 설정
+      CACHE_ENABLED: true
+      EMBEDDING_CACHE_TTL: 86400
+      SEARCH_CACHE_TTL: 3600
+      API_CACHE_TTL: 300
+      
+      # 보안
+      SECRET_KEY: ${SECRET_KEY}
+      
+      # Gunicorn 설정
+      WORKERS: ${WORKERS:-4}
+      MAX_REQUESTS: ${MAX_REQUESTS:-1000}
+      MAX_REQUESTS_JITTER: ${MAX_REQUESTS_JITTER:-100}
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/logs:/app/logs
+      - /etc/localtime:/etc/localtime:ro  # 시스템 시간 동기화
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      replicas: 2  # 고가용성을 위한 복제본
+    command: >
+      sh -c "
+        echo 'Waiting for database...';
+        while ! pg_isready -h postgres -U ${POSTGRES_USER}; do sleep 1; done;
+        echo 'Running migrations...';
+        alembic upgrade head;
+        echo 'Starting Gunicorn server...';
+        gunicorn app.main:app
+          --workers ${WORKERS:-4}
+          --worker-class uvicorn.workers.UvicornWorker
+          --bind 0.0.0.0:8000
+          --timeout 120
+          --graceful-timeout 30
+          --keep-alive 5
+          --max-requests ${MAX_REQUESTS:-1000}
+          --max-requests-jitter ${MAX_REQUESTS_JITTER:-100}
+          --access-logfile /app/logs/access.log
+          --error-logfile /app/logs/error.log
+          --log-level info
+      "
+
+  # 프론트엔드
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    container_name: swu-frontend-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+      replicas: 2
+
+  # Nginx 리버스 프록시
+  nginx:
+    image: nginx:alpine
+    container_name: swu-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro  # SSL 인증서
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+volumes:
+  postgres_data:
+    name: swu_postgres_data_prod
+  redis_data:
+    name: swu_redis_data_prod
+
+networks:
+  default:
+    name: swu_network_prod
+    driver: bridge

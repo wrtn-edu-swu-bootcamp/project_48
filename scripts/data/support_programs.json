@@ -1,0 +1,116 @@
+[
+  {
+    "name": "교외장학금",
+    "program_type": "장학금",
+    "application_start": "2025-02-01",
+    "application_end": "2025-02-20",
+    "target": "외국교환학생 선발자, 우수한 학업성적 및 경제적 여건 고려",
+    "application_method": "학생성장지원시스템을 통한 온라인 신청",
+    "requirements": "외국교환학생 선발자 또는 우수 성적 및 가정형편 고려",
+    "documents": "장학금 신청서, 성적증명서, 가족관계증명서 등",
+    "benefits": "등록금 일부 또는 전액 지원",
+    "description": "외국교환학생 선발자 및 우수한 학업성적을 가진 학생에게 지원하는 장학금입니다."
+  },
+  {
+    "name": "국가장학금",
+    "program_type": "장학금",
+    "application_start": "2025-01-15",
+    "application_end": "2025-02-28",
+    "target": "국가보훈자녀, 북한이탈주민 자녀 등 특별 대상자",
+    "application_method": "한국장학재단 홈페이지 (www.kosaf.go.kr) 신청",
+    "requirements": "국가보훈대상자 또는 북한이탈주민 자녀",
+    "documents": "국가보훈대상자 증명서 또는 북한이탈주민 확인서",
+    "benefits": "등록금 전액 또는 일부 지원",
+    "description": "국가에서 지원하는 장학금으로, 특별 대상자에게 지원됩니다."
+  },
+  {
+    "name": "학교 내부 장학금",
+    "program_type": "장학금",
+    "application_start": "2025-02-01",
+    "application_end": "2025-02-20",
+    "target": "성적 우수자 및 가정 형편을 고려한 재학생",
+    "application_method": "학생성장지원시스템을 통한 온라인 신청",
+    "requirements": "평점 평균 3.0 이상 및 가정형편 고려",
+    "documents": "장학금 신청서, 성적증명서, 가족관계증명서, 소득증명서 등",
+    "benefits": "등록금 일부 지원 (학기당 50만원~200만원)",
+    "description": "학교 자체 예산으로 지원하는 장학금입니다."
+  },
+  {
+    "name": "학생성장지원시스템",
+    "program_type": "비교과 프로그램",
+    "target": "전체 재학생",
+    "application_method": "학생성장지원시스템 온라인 신청",
+    "requirements": "재학생",
+    "documents": "없음 (온라인 신청만)",
+    "benefits": "비교과 활동 기록, 마일리지 적립, 핵심역량 진단",
+    "description": "비교과 활동, 진로·취업, 상담을 통합 관리하는 시스템입니다. 마일리지 적립 시 장학금 수혜 가능성이 높아집니다."
+  },
+  {
+    "name": "SWU-SI 사회혁신 프로젝트",
+    "program_type": "비교과 프로그램",
+    "application_start": "2025-03-10",
+    "application_end": "2025-03-20",
+    "target": "사회문제에 관심있는 재학생",
+    "application_method": "SWU-SI 센터 홈페이지 신청",
+    "requirements": "재학생, 사회문제 해결에 대한 관심",
+    "documents": "프로젝트 계획서, 팀 구성서",
+    "benefits": "프로젝트 지원금, 멘토링, 마일리지 적립",
+    "description": "사회혁신자를 양성하기 위한 교과-비교과 연계 교육과정입니다. 프로젝트, 봉사, 동아리 활동이 포함됩니다."
+  },
+  {
+    "name": "온라인 동문 멘토링",
+    "program_type": "멘토링",
+    "application_start": "2025-03-01",
+    "application_end": "2025-03-15",
+    "target": "전체 재학생",
+    "application_method": "학생성장지원시스템 신청",
+    "requirements": "재학생",
+    "documents": "멘토링 신청서",
+    "benefits": "1:1 멘토링, 진로·취업 상담, 마일리지 적립",
+    "description": "졸업 동문과의 온라인 멘토링 프로그램입니다. 진로 및 취업 준비를 지원합니다."
+  },
+  {
+    "name": "취업 멘토링",
+    "program_type": "멘토링",
+    "application_start": "2025-04-01",
+    "application_end": "2025-04-30",
+    "target": "취업 준비 중인 재학생",
+    "application_method": "대학일자리플러스사업단 홈페이지 신청",
+    "requirements": "3학년 이상 재학생 권장",
+    "documents": "멘토링 신청서, 이력서",
+    "benefits": "취업 멘토링, 모의면접, 이력서 컨설팅",
+    "description": "대학일자리플러스사업단에서 제공하는 취업 멘토링 프로그램입니다."
+  },
+  {
+    "name": "창업동아리",
+    "program_type": "비교과 프로그램",
+    "application_start": "2025-03-15",
+    "application_end": "2025-03-31",
+    "target": "창업에 관심있는 재학생",
+    "application_method": "창업교육센터 신청",
+    "requirements": "재학생, 창업 아이디어 보유",
+    "documents": "사업계획서, 팀 구성서",
+    "benefits": "창업 지원금, 멘토링, 사업화 지원",
+    "description": "창업교육센터에서 지원하는 창업동아리 프로그램입니다."
+  },
+  {
+    "name": "캠퍼스 마일리지 제도",
+    "program_type": "기타",
+    "target": "전체 재학생",
+    "application_method": "자동 적립 (학생성장지원시스템)",
+    "requirements": "재학생, 비교과 활동 참여",
+    "documents": "없음",
+    "benefits": "마일리지 적립 시 장학금 수혜 가능성 향상",
+    "description": "학생의 다양한 활동 및 학업 성취도를 마일리지로 적립하여 장학금 수혜 가능하게 하는 제도입니다."
+  },
+  {
+    "name": "학자금 대출",
+    "program_type": "기타",
+    "target": "등록금 납부가 어려운 재학생",
+    "application_method": "한국장학재단 홈페이지 (www.kosaf.go.kr)",
+    "requirements": "재학생, 소득 기준 충족",
+    "documents": "학자금대출 신청서, 재학증명서, 소득증명서",
+    "benefits": "등록금 대출 (저금리 또는 무이자)",
+    "description": "한국장학재단에서 제공하는 학자금 대출 제도입니다."
+  }
+]
