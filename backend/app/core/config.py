@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     
     # AI API 설정
     OPENAI_API_KEY: str = ""
-    ANTHROPIC_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
     EMBEDDING_MODEL: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     
     # CORS 설정

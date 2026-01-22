@@ -21,9 +21,9 @@ export const useChat = () => {
     setIsLoading(true);
 
     try {
-      // 백엔드 API 호출
-      const response = await apiClient.post("/api/v1/chat", {
-        question: content,
+      // 내부 API Routes 호출
+      const response = await apiClient.post("/api/chat", {
+        message: content,
       });
       const data = response.data;
 

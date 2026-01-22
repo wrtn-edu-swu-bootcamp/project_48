@@ -22,8 +22,8 @@ export const chatAPI = {
    * 질문을 전송하고 답변을 받습니다
    */
   async sendMessage(question: string): Promise<ChatResponse> {
-    const response = await apiClient.post<ChatResponse>("/api/v1/chat", {
-      question,
+    const response = await apiClient.post<ChatResponse>("/api/chat", {
+      message: question,
     });
     return response.data;
   },
@@ -36,11 +36,8 @@ export const chatAPI = {
     feedback: "positive" | "negative",
     comment?: string
   ): Promise<void> {
-    await apiClient.post("/api/v1/feedback", {
-      message_id: messageId,
-      feedback,
-      comment,
-    });
+    // TODO: 피드백 API 구현 예정
+    console.log("Feedback:", { messageId, feedback, comment });
   },
 };
 
@@ -53,7 +50,7 @@ export const scheduleAPI = {
     if (semester) params.append("semester", semester);
     if (scheduleType) params.append("schedule_type", scheduleType);
     
-    const response = await apiClient.get(`/api/v1/schedules?${params.toString()}`);
+    const response = await apiClient.get(`/api/schedules?${params.toString()}`);
     return response.data;
   },
 
@@ -61,7 +58,7 @@ export const scheduleAPI = {
    * 특정 학사 일정을 가져옵니다
    */
   async getSchedule(id: number) {
-    const response = await apiClient.get(`/api/v1/schedules/${id}`);
+    const response = await apiClient.get(`/api/schedules/${id}`);
     return response.data;
   },
 };
@@ -76,7 +73,7 @@ export const noticeAPI = {
     params.append("limit", String(limit));
     params.append("offset", String(offset));
     
-    const response = await apiClient.get(`/api/v1/notices?${params.toString()}`);
+    const response = await apiClient.get(`/api/notices?${params.toString()}`);
     return response.data;
   },
 
@@ -84,7 +81,7 @@ export const noticeAPI = {
    * 특정 공지사항을 가져옵니다
    */
   async getNotice(id: number) {
-    const response = await apiClient.get(`/api/v1/notices/${id}`);
+    const response = await apiClient.get(`/api/notices/${id}`);
     return response.data;
   },
 };
@@ -99,7 +96,7 @@ export const programAPI = {
     params.append("limit", String(limit));
     params.append("offset", String(offset));
     
-    const response = await apiClient.get(`/api/v1/programs?${params.toString()}`);
+    const response = await apiClient.get(`/api/programs?${params.toString()}`);
     return response.data;
   },
 
@@ -107,7 +104,7 @@ export const programAPI = {
    * 특정 지원 프로그램을 가져옵니다
    */
   async getProgram(id: number) {
-    const response = await apiClient.get(`/api/v1/programs/${id}`);
+    const response = await apiClient.get(`/api/programs/${id}`);
     return response.data;
   },
 };

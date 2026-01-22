@@ -16,14 +16,14 @@ class TestRAGPipeline:
         """Test complete RAG pipeline flow."""
         pipeline = RAGPipeline()
         
-        # Mock Claude API response
+        # Mock Gemini API response
         mock_response = Mock()
         mock_response.content = [
             Mock(text="# 수강신청 일정 안내\n\n**요약**: 1학기 수강신청은 3월 1일~5일입니다.\n\n**출처**: 학사일정")
         ]
         
-        with patch('app.services.ai.client.ClaudeClient.generate_response', new_callable=AsyncMock) as mock_claude:
-            mock_claude.return_value = mock_response
+        with patch('app.services.ai.client.GeminiClient.generate_response', new_callable=AsyncMock) as mock_gemini:
+            mock_gemini.return_value = mock_response
             
             result = await pipeline.process_question(sample_question, db_session)
             
@@ -43,8 +43,8 @@ class TestRAGPipeline:
             Mock(text="해당 내용은 현재 제공된 정보에서 확인되지 않아요.")
         ]
         
-        with patch('app.services.ai.client.ClaudeClient.generate_response', new_callable=AsyncMock) as mock_claude:
-            mock_claude.return_value = mock_response
+        with patch('app.services.ai.client.GeminiClient.generate_response', new_callable=AsyncMock) as mock_gemini:
+            mock_gemini.return_value = mock_response
             
             result = await pipeline.process_question(question, db_session)
             
@@ -58,7 +58,7 @@ class TestRAGPipeline:
         """Test RAG pipeline error handling."""
         pipeline = RAGPipeline()
         
-        with patch('app.services.ai.client.ClaudeClient.generate_response', side_effect=Exception("API Error")):
+        with patch('app.services.ai.client.GeminiClient.generate_response', side_effect=Exception("API Error")):
             result = await pipeline.process_question(sample_question, db_session)
             
             # Should return fallback response on error

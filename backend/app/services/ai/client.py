@@ -1,7 +1,7 @@
 """
-Anthropic Claude API 클라이언트
+Google Gemini API 클라이언트
 """
-import anthropic
+import google.generativeai as genai
 from app.core.config import settings
 from typing import List, Dict, Optional
 import logging
@@ -9,14 +9,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ClaudeClient:
-    """Claude API 클라이언트 클래스"""
+class GeminiClient:
+    """Gemini API 클라이언트 클래스"""
     
     def __init__(self):
-        """Claude 클라이언트 초기화"""
-        self.client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
-        self.model = "claude-3-5-sonnet-20241022"  # 최신 Claude 모델
-        logger.info("✓ Claude 클라이언트 초기화 완료")
+        """Gemini 클라이언트 초기화"""
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.model_name = "gemini-2.0-flash-exp"  # 최신 Gemini 2.0 Flash 모델
+        self.model = genai.GenerativeModel(
+            model_name=self.model_name,
+            generation_config={
+                "temperature": 0.7,  # 답변 다양성 확보
+                "top_p": 0.95,
+                "top_k": 40,
+                "max_output_tokens": 2048,
+            }
+        )
+        logger.info("✓ Gemini 클라이언트 초기화 완료")
     
     async def generate_response(
         self,
@@ -26,7 +35,7 @@ class ClaudeClient:
         max_tokens: int = 2000,
     ) -> str:
         """
-        Claude API를 사용하여 응답 생성
+        Gemini API를 사용하여 응답 생성
         
         Args:
             user_message: 사용자 메시지
@@ -45,25 +54,31 @@ class ClaudeClient:
             else:
                 full_message = user_message
             
-            # Claude API 호출
-            message = self.client.messages.create(
-                model=self.model,
-                max_tokens=max_tokens,
-                system=system_prompt,
-                messages=[
-                    {"role": "user", "content": full_message}
-                ]
+            # 시스템 프롬프트와 사용자 메시지를 결합
+            # Gemini는 시스템 프롬프트를 별도로 받지 않으므로 메시지 앞에 추가
+            combined_prompt = f"{system_prompt}\n\n{full_message}"
+            
+            # Gemini API 호출
+            response = self.model.generate_content(
+                combined_prompt,
+                generation_config=genai.GenerationConfig(
+                    max_output_tokens=max_tokens,
+                    temperature=0.7,
+                )
             )
             
             # 응답 추출
-            response = message.content[0].text
+            if response.candidates and len(response.candidates) > 0:
+                answer = response.candidates[0].content.parts[0].text
+            else:
+                raise Exception("Gemini API가 유효한 응답을 생성하지 못했습니다.")
             
-            logger.info(f"Claude API 호출 성공 (토큰: {message.usage.input_tokens + message.usage.output_tokens})")
+            logger.info(f"Gemini API 호출 성공")
             
-            return response
+            return answer
             
         except Exception as e:
-            logger.error(f"Claude API 호출 중 오류: {e}")
+            logger.error(f"Gemini API 호출 중 오류: {e}")
             raise
     
     def _format_context(self, context: List[Dict[str, str]]) -> str:
@@ -102,12 +117,12 @@ class ClaudeClient:
 
 
 # 싱글톤 인스턴스
-_claude_client = None
+_gemini_client = None
 
 
-def get_claude_client() -> ClaudeClient:
-    """Claude 클라이언트 인스턴스 반환 (싱글톤)"""
-    global _claude_client
-    if _claude_client is None:
-        _claude_client = ClaudeClient()
-    return _claude_client
+def get_gemini_client() -> GeminiClient:
+    """Gemini 클라이언트 인스턴스 반환 (싱글톤)"""
+    global _gemini_client
+    if _gemini_client is None:
+        _gemini_client = GeminiClient()
+    return _gemini_client

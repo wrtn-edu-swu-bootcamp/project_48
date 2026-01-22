@@ -4,7 +4,7 @@ RAG (Retrieval-Augmented Generation) 파이프라인
 from typing import Dict, Any, List
 from sqlalchemy.orm import Session
 from app.services.search import SearchService
-from app.services.ai.client import get_claude_client
+from app.services.ai.client import get_gemini_client
 from app.services.ai.prompts import SYSTEM_PROMPT, create_rag_prompt
 from app.services.classifier import QuestionClassifier
 from app.models.question_log import QuestionCategory
@@ -25,7 +25,7 @@ class RAGPipeline:
         """
         self.db = db
         self.search_service = SearchService(db)
-        self.claude_client = get_claude_client()
+        self.gemini_client = get_gemini_client()
         self.classifier = QuestionClassifier()
     
     async def process_question(
@@ -73,8 +73,8 @@ class RAGPipeline:
             # 4. RAG 프롬프트 생성
             rag_prompt = create_rag_prompt(question, search_results)
             
-            # 5. Claude API를 사용하여 답변 생성
-            answer = await self.claude_client.generate_response(
+            # 5. Gemini API를 사용하여 답변 생성
+            answer = await self.gemini_client.generate_response(
                 user_message=rag_prompt,
                 system_prompt=SYSTEM_PROMPT,
                 max_tokens=2000

@@ -8,8 +8,13 @@ from datetime import datetime
 
 class ChatRequest(BaseModel):
     """챗봇 질문 요청 스키마"""
-    question: str = Field(..., description="질문 내용", min_length=1, max_length=1000)
-    context: Optional[List[str]] = Field(None, description="컨텍스트 정보")
+    message: str = Field(..., description="질문 내용", min_length=1, max_length=1000)
+    session_id: Optional[str] = Field(None, description="세션 ID")
+    
+    # 내부에서 question으로도 접근 가능하도록
+    @property
+    def question(self) -> str:
+        return self.message
 
 
 class ChatResponse(BaseModel):

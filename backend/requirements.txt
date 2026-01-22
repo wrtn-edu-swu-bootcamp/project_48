@@ -14,7 +14,7 @@ python-dotenv==1.0.1
 
 # AI API 클라이언트
 openai==1.54.3
-anthropic==0.39.0
+google-generativeai==0.8.3
 
 # 벡터 검색 및 임베딩
 pgvector==0.3.5

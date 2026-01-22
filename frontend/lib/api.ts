@@ -1,7 +1,8 @@
 import axios from "axios";
 
+// Vercel 배포 시 내부 API Routes 사용
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+  baseURL: "", // 내부 API Routes 사용 (상대 경로)
   headers: {
     "Content-Type": "application/json",
   },

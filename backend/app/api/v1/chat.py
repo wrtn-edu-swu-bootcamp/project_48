@@ -34,11 +34,11 @@ async def chat(
     6. 질문 로그 저장
     """
     try:
-        logger.info(f"채팅 요청 받음: {request.question}")
+        logger.info(f"채팅 요청 받음: {request.message}")
         
         # RAG 파이프라인을 사용하여 답변 생성
         rag_pipeline = get_rag_pipeline(db)
-        rag_result = await rag_pipeline.process_question(request.question)
+        rag_result = await rag_pipeline.process_question(request.message)
 
         # 응답 구성
         response = ChatResponse(
@@ -62,7 +62,7 @@ async def chat(
             )
             
             question_log = QuestionLog(
-                question=request.question,
+                question=request.message,
                 answer=response.answer,
                 category=category_enum,
                 status=QuestionStatus.COMPLETED if rag_result.get("success") else QuestionStatus.FAILED,
@@ -93,7 +93,7 @@ async def chat(
         # 에러 로그 저장
         try:
             question_log = QuestionLog(
-                question=request.question,
+                question=request.message,
                 answer=response.answer,
                 category=QuestionCategory.OTHER,
                 status=QuestionStatus.FAILED,

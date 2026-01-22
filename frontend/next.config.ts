@@ -1,11 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 성능 최적화 설정
-  
-  // Docker 배포를 위한 standalone 모드 (선택사항)
-  // output: "standalone",
-  
   // 이미지 최적화
   images: {
     formats: ["image/avif", "image/webp"],
@@ -20,9 +15,6 @@ const nextConfig: NextConfig = {
   // 프로덕션 소스맵 비활성화 (빌드 속도 향상)
   productionBrowserSourceMaps: false,
 
-  // SWC 컴파일러 최적화
-  swcMinify: true,
-
   // 실험적 기능
   experimental: {
     // 서버 액션 활성화
@@ -30,6 +22,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "2mb",
     },
   },
+
+  // Turbopack 설정 (Next.js 16 기본)
+  turbopack: {},
 
   // 헤더 설정 (캐싱, 보안)
   async headers() {
@@ -61,43 +56,6 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
-  },
-
-  // 웹팩 설정 (청크 최적화)
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // 클라이언트 사이드 청크 최적화
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: "all",
-          cacheGroups: {
-            default: false,
-            vendors: false,
-            // 공통 모듈
-            commons: {
-              name: "commons",
-              chunks: "all",
-              minChunks: 2,
-              priority: 10,
-            },
-            // React 관련 라이브러리
-            react: {
-              name: "react",
-              test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
-              priority: 20,
-            },
-            // UI 라이브러리
-            ui: {
-              name: "ui",
-              test: /[\\/]components[\\/]ui[\\/]/,
-              priority: 15,
-            },
-          },
-        },
-      };
-    }
-    return config;
   },
 };
 

@@ -69,8 +69,8 @@ def sample_context():
 
 
 @pytest.fixture
-def mock_claude_response():
-    """Mock Claude API response."""
+def mock_gemini_response():
+    """Mock Gemini API response."""
     return {
         "content": [
             {
