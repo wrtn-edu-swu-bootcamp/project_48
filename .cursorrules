@@ -1,0 +1,519 @@
+# AI 신입생 도우미 프로젝트 - Cursor 규칙
+
+## 프로젝트 개요
+
+**프로젝트명**: AI 신입생 도우미 (서울여자대학교)  
+**목적**: 신입생 대상 학사 정보 챗봇 서비스  
+**기술 스택**: React 18, Tailwind CSS, Node.js/Python 백엔드 예정  
+**아키텍처**: Frontend (React) → Backend → Database + AI (RAG 패턴)
+
+### 핵심 기능
+1. 학사 일정 안내 (수강신청, 등록금 납부, 휴학 등)
+2. 공지사항 안내
+3. 지원 프로그램 안내 (장학금, 비교과, 멘토링)
+4. 신입생 기본 정보 안내 (학사 용어, 제도 설명)
+
+---
+
+## 코딩 스타일 및 컨벤션
+
+### React 컴포넌트
+- 함수형 컴포넌트만 사용 (클래스 컴포넌트 금지)
+- Hooks 패턴 사용 (useState, useEffect, useChat 등)
+- 컴포넌트는 단일 책임 원칙 준수
+- Props는 명확한 이름 사용, 타입 정의 권장
+
+```jsx
+// ✅ 좋은 예
+function UserMessage({ message, timestamp }) {
+  return (
+    <div className="flex justify-end mb-4">
+      <div className="bg-[#800020] text-white px-4 py-2 rounded-lg">
+        {message}
+      </div>
+    </div>
+  );
+}
+
+// ❌ 나쁜 예
+class UserMessage extends Component { ... }
+```
+
+### 파일 및 폴더 명명 규칙
+- **컴포넌트 파일**: PascalCase (예: `UserMessage.jsx`)
+- **폴더**: kebab-case (예: `chat-area/`)
+- **훅**: `use` 접두사 (예: `useChat.js`)
+- **유틸리티**: kebab-case (예: `api-utils.js`)
+
+### 코드 포맷팅
+- 들여쓰기: 2 spaces
+- 세미콜론 사용
+- 작은따옴표(') 사용
+- JSX 속성은 따옴표로 감싸기
+- 최대 줄 길이: 100자
+
+### Tailwind CSS 사용
+- 인라인 클래스 사용 (별도 CSS 파일 지양)
+- 디자인 토큰 우선 사용 (컬러, 간격 등)
+- 커스텀 클래스는 `@apply` 지시어 사용
+- 반응형 클래스는 모바일 퍼스트 (`md:`, `lg:`)
+
+```jsx
+// ✅ 좋은 예
+<div className="bg-white px-4 py-6 md:px-6 lg:px-8">
+  <h1 className="text-2xl font-bold text-[#1A1A1A]">제목</h1>
+</div>
+
+// ❌ 나쁜 예
+<div className="custom-container">
+  <h1 className="title">제목</h1>
+</div>
+```
+
+---
+
+## 컴포넌트 개발 가이드
+
+### 컴포넌트 구조
+```
+src/
+├── components/
+│   ├── ChatArea/
+│   │   ├── ChatArea.jsx
+│   │   ├── MessageList.jsx
+│   │   ├── UserMessage.jsx
+│   │   └── BotMessage.jsx
+│   ├── Header/
+│   │   └── Header.jsx
+│   └── InputArea/
+│       ├── InputArea.jsx
+│       └── SendButton.jsx
+├── hooks/
+│   └── useChat.js
+└── utils/
+    └── api.js
+```
+
+### Props 타입 정의
+- Props는 명확한 이름과 타입 사용
+- 필수 Props는 기본값 없이 정의
+- 선택적 Props는 기본값 제공
+
+```jsx
+// ✅ 좋은 예
+function BotMessage({ message, source, timestamp }) {
+  return (
+    <div className="flex items-start mb-4">
+      <div className="bg-[#F5F5F5] px-4 py-2 rounded-lg">
+        <p className="text-[#1A1A1A]">{message}</p>
+        {source && (
+          <p className="text-xs text-[#999999] italic mt-2">출처: {source}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+### 상태 관리
+- 로컬 상태는 `useState` 사용
+- 전역 상태는 Context API 또는 `useChat` 훅 사용
+- 복잡한 상태는 `useReducer` 고려
+
+```jsx
+// ✅ 좋은 예
+const [messages, setMessages] = useState([]);
+const { sendMessage, loading } = useChat();
+
+// ❌ 나쁜 예
+const [state, setState] = useState({ messages: [], loading: false, error: null });
+```
+
+### 이벤트 핸들링
+- 이벤트 핸들러는 `handle` 접두사 사용
+- 인라인 함수는 간단한 경우만 허용
+- 복잡한 로직은 별도 함수로 분리
+
+```jsx
+// ✅ 좋은 예
+function InputArea({ onSendMessage }) {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const message = e.target.message.value;
+    if (message.trim()) {
+      onSendMessage(message);
+      e.target.reset();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input name="message" className="..." />
+      <button type="submit">전송</button>
+    </form>
+  );
+}
+```
+
+---
+
+## 디자인 시스템 적용
+
+### 컬러 시스템
+- **메인 컬러**: 버건디 `#800020` (주요 버튼, 강조 요소)
+- **배경**: 화이트 `#FFFFFF`, 연한 그레이 `#FAFAFA`
+- **텍스트**: 주요 `#1A1A1A`, 보조 `#666666`, 비활성 `#999999`
+- **상태**: 성공 `#10B981`, 경고 `#F59E0B`, 오류 `#EF4444`
+
+```jsx
+// ✅ Tailwind에서 사용
+className="bg-[#800020] text-white"  // 메인 버튼
+className="bg-[#F5F5F5] text-[#1A1A1A]"  // 봇 메시지
+className="text-[#666666]"  // 보조 텍스트
+```
+
+### 타이포그래피
+- **제목 H1**: `text-3xl font-bold` (32px, Bold)
+- **제목 H2**: `text-2xl font-bold` (28px, Bold)
+- **본문**: `text-base` (16px, Regular)
+- **보조 텍스트**: `text-sm` (14px, Regular)
+- **캡션**: `text-xs` (12px, Regular)
+
+### 간격 시스템 (8포인트 그리드)
+- 기본 단위: 4px (0.25rem)
+- 사용: `p-2` (8px), `p-4` (16px), `p-6` (24px), `p-8` (32px)
+- 요소 간 간격: 최소 16px (`mb-4`)
+
+```jsx
+// ✅ 좋은 예
+<div className="p-4 mb-4">  // 패딩 16px, 하단 마진 16px
+  <h2 className="text-2xl font-bold mb-4">제목</h2>  // 하단 마진 16px
+  <p className="text-base">본문</p>
+</div>
+```
+
+### 반응형 디자인
+- 모바일 퍼스트 접근
+- 브레이크포인트: `md:` (768px), `lg:` (1024px)
+- 컨테이너 최대 너비: `max-w-3xl` (768px) 또는 `max-w-5xl` (1024px)
+
+```jsx
+// ✅ 좋은 예
+<div className="px-4 md:px-6 lg:px-8 max-w-3xl mx-auto">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {/* 콘텐츠 */}
+  </div>
+</div>
+```
+
+---
+
+## 접근성 필수 사항
+
+### WCAG 2.1 Level AA 준수
+- 색상 대비: 최소 4.5:1 (일반 텍스트), 3:1 (큰 텍스트)
+- 키보드 네비게이션: 모든 인터랙티브 요소 접근 가능
+- 스크린 리더: ARIA 속성 적절히 사용
+
+### ARIA 속성
+- 모든 인터랙티브 요소에 `aria-label` 또는 `aria-labelledby`
+- 버튼은 명확한 라벨 제공
+- 폼 요소는 `aria-describedby`로 에러 메시지 연결
+
+```jsx
+// ✅ 좋은 예
+<button 
+  aria-label="메시지 전송"
+  className="bg-[#800020] text-white px-4 py-2 rounded"
+>
+  <svg aria-hidden="true">...</svg>
+</button>
+
+<input
+  type="text"
+  aria-label="질문 입력"
+  aria-describedby="input-help"
+  className="..."
+/>
+<p id="input-help" className="text-xs text-[#666666]">
+  Enter로 전송, Shift+Enter로 줄바꿈
+</p>
+```
+
+### 키보드 네비게이션
+- Tab 순서 논리적
+- 포커스 표시 명확 (버건디 테두리 2px)
+- Enter/Space로 버튼 클릭 가능
+- Esc로 모달/메뉴 닫기
+
+```jsx
+// ✅ 좋은 예
+<button
+  className="focus:outline-none focus:ring-2 focus:ring-[#800020] focus:ring-offset-2"
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  }}
+>
+  버튼
+</button>
+```
+
+### 스크린 리더 고려
+- 의미 있는 HTML 시맨틱 태그 사용 (`<header>`, `<main>`, `<nav>` 등)
+- 이미지는 `alt` 텍스트 필수
+- 숨김 텍스트는 `sr-only` 클래스 사용
+
+```jsx
+// ✅ 좋은 예
+<main aria-label="채팅 영역">
+  <div role="log" aria-live="polite" aria-atomic="false">
+    {messages.map((msg, idx) => (
+      <div key={idx}>{msg.content}</div>
+    ))}
+  </div>
+</main>
+```
+
+---
+
+## API 및 데이터 처리
+
+### useChat 훅 사용
+- `useChat` 훅을 통한 메시지 관리
+- `sendMessage` 함수로 메시지 전송
+- `loading` 상태로 로딩 인디케이터 표시
+
+```jsx
+// ✅ 좋은 예
+import { useChat } from './hooks/useChat';
+
+function ChatArea() {
+  const { messages, sendMessage, loading } = useChat();
+
+  return (
+    <div>
+      {messages.map((msg, idx) => (
+        <Message key={idx} message={msg} />
+      ))}
+      {loading && <TypingIndicator />}
+    </div>
+  );
+}
+```
+
+### 에러 처리
+- 네트워크 에러는 사용자 친화적 메시지 표시
+- 재시도 버튼 제공
+- 에러 상태는 명확히 표시
+
+```jsx
+// ✅ 좋은 예
+function ChatArea() {
+  const [error, setError] = useState(null);
+
+  const handleSend = async (message) => {
+    try {
+      setError(null);
+      await sendMessage(message);
+    } catch (err) {
+      setError('연결이 끊어졌어요. 다시 시도해주세요.');
+    }
+  };
+
+  return (
+    <>
+      {error && (
+        <div className="bg-[#FEE2E2] border-l-4 border-[#EF4444] p-4 mb-4">
+          <p className="text-[#1A1A1A]">{error}</p>
+          <button onClick={() => handleSend(lastMessage)}>
+            다시 시도
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+```
+
+### 로딩 상태
+- 타이핑 인디케이터 표시
+- 스켈레톤 UI 사용 (긴 답변 예상 시)
+- 로딩 중 사용자 입력 방지
+
+```jsx
+// ✅ 좋은 예
+function TypingIndicator() {
+  return (
+    <div className="flex items-center gap-1 p-2">
+      <div className="w-2 h-2 bg-[#999999] rounded-full animate-bounce" />
+      <div className="w-2 h-2 bg-[#999999] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+      <div className="w-2 h-2 bg-[#999999] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+    </div>
+  );
+}
+```
+
+### RAG 패턴 고려사항
+- 답변은 제공된 데이터만 기반으로 생성
+- 출처 정보 항상 표기
+- 모르는 내용은 추측하지 않고 명확히 안내
+
+```jsx
+// ✅ 좋은 예
+function BotMessage({ message, source }) {
+  return (
+    <div>
+      <p>{message}</p>
+      {source && (
+        <p className="text-xs text-[#999999] italic mt-2">
+          출처: {source}
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## 챗봇 특화 가이드
+
+### 메시지 컴포넌트
+- **UserMessage**: 우측 정렬, 버건디 배경, 화이트 텍스트
+- **BotMessage**: 좌측 정렬, 연한 그레이 배경, 아바타 포함
+- 메시지 간격: 16px (`mb-4`)
+
+```jsx
+// ✅ UserMessage
+function UserMessage({ message, timestamp }) {
+  return (
+    <div className="flex justify-end mb-4">
+      <div className="bg-[#800020] text-white px-4 py-2 rounded-lg max-w-[75%]">
+        <p>{message}</p>
+        {timestamp && (
+          <p className="text-xs text-white/70 mt-1 text-right">{timestamp}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ✅ BotMessage
+function BotMessage({ message, source, timestamp }) {
+  return (
+    <div className="flex items-start gap-2 mb-4">
+      <div className="w-8 h-8 bg-[#800020] rounded-full flex items-center justify-center flex-shrink-0">
+        <span className="text-white text-sm">AI</span>
+      </div>
+      <div className="bg-[#F5F5F5] px-4 py-2 rounded-lg max-w-[75%]">
+        <p className="text-[#1A1A1A]">{message}</p>
+        {source && (
+          <p className="text-xs text-[#999999] italic mt-2">출처: {source}</p>
+        )}
+        {timestamp && (
+          <p className="text-xs text-[#999999] mt-1">{timestamp}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+### Quick Reply 버튼
+- 화이트 배경, 버건디 테두리, pill shape
+- 최대 3-4개로 제한 (선택 피로도 방지)
+- 클릭 시 해당 질문 자동 전송
+
+```jsx
+// ✅ 좋은 예
+function QuestionExamples({ onQuestionClick }) {
+  const examples = [
+    "수강신청은 언제 하나요?",
+    "장학금 신청 방법이 궁금해요",
+    "학사 용어가 어려워요"
+  ];
+
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-2">
+      {examples.map((q, idx) => (
+        <button
+          key={idx}
+          onClick={() => onQuestionClick(q)}
+          className="bg-white border border-[#800020] text-[#800020] px-4 py-2 rounded-full text-sm whitespace-nowrap hover:bg-[#800020] hover:text-white transition-colors"
+        >
+          {q}
+        </button>
+      ))}
+    </div>
+  );
+}
+```
+
+### 폴백 메시지 처리
+- 봇이 이해하지 못한 경우 친절한 안내
+- 인간 상담원 연결 옵션 제공
+- 재시도 또는 다른 질문 제안
+
+```jsx
+// ✅ 좋은 예
+function FallbackMessage({ onRetry, onContactHuman }) {
+  return (
+    <div className="bg-[#FEE2E2] border-l-4 border-[#EF4444] p-4 mb-4">
+      <p className="text-[#1A1A1A] mb-2">
+        죄송해요. 질문을 정확히 이해하지 못했어요.
+      </p>
+      <div className="flex gap-2">
+        <button onClick={onRetry} className="text-sm text-[#800020]">
+          다시 말씀해주세요
+        </button>
+        <button onClick={onContactHuman} className="text-sm text-[#800020]">
+          상담원 연결하기
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 금지 사항 및 주의사항
+
+### 금지 사항
+- ❌ 추측성 답변 생성 (데이터에 없는 내용 추측 금지)
+- ❌ 과도한 애니메이션 (필수적인 것만 사용)
+- ❌ 접근성 무시 (ARIA 속성, 키보드 네비게이션 필수)
+- ❌ 하드코딩된 값 (상수는 별도 파일로 관리)
+- ❌ 인라인 스타일 (Tailwind 클래스 사용)
+- ❌ 클래스 컴포넌트 사용
+
+### 주의사항
+- 모든 사용자 입력은 검증 및 sanitization 필요
+- API 키는 환경 변수로 관리 (코드에 노출 금지)
+- 성능 최적화: 불필요한 리렌더링 방지 (`useMemo`, `useCallback` 고려)
+- 모바일 퍼스트: 모바일에서 먼저 테스트
+
+### 코드 리뷰 체크리스트
+- [ ] 접근성 요구사항 충족 (ARIA, 키보드 네비게이션)
+- [ ] 디자인 시스템 준수 (컬러, 간격, 타이포그래피)
+- [ ] 에러 처리 구현
+- [ ] 로딩 상태 표시
+- [ ] 반응형 디자인 적용
+- [ ] 코드 포맷팅 및 린팅 통과
+
+---
+
+## 참고 문서
+
+- `docs/Architecture.md`: 시스템 구조 및 RAG 패턴 상세
+- `docs/Design_Guide.md`: 디자인 시스템 전체 가이드
+- `docs/기획안.md`: 기능 정의 및 서비스 규칙
+- `docs/와이어프레임.md`: UI 컴포넌트 구조 및 상호작용
+
+---
+
+**마지막 업데이트**: 2026년 1월 22일  
+**버전**: 1.0
